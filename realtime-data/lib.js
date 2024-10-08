@@ -639,6 +639,7 @@ function FR(e) {
   return i;
 }
 
+//Option Data
 function BR(e) {
   const t = FR(e.slice(0, 4)),
     i = e.slice(4, 12),
@@ -658,7 +659,7 @@ function BR(e) {
   let _timestamp = new Date();
   // console.log(t, l, _timestamp);
 
-  console.log("BANK NIFTY--------------------");
+  // console.log("BANK NIFTY--------------------");
 
   return {
     token: t,
@@ -682,18 +683,21 @@ function QR(e) {
   };
 }
 
-function XR(e) {
+function BINARY_TO_JSON(e) {
   if (!e || e.byteLength <= 0)
     throw new Error("empty binary packet cannot be processed");
   const t = new Uint8Array(e),
     i = t[0];
 
-  console.log(i);
+  // if (i === 3) console.log("FETCH--------", i);
 
   switch (i) {
     case WR.OPTION_CHAIN:
       let _payload = BR(t.slice(1));
-      // console.log("token", _payload.token);
+
+      // if (_payload.data == 4278529)
+      // console.log("option", _payload.token);
+
       let snapshot = instruments.iCache.get(_payload.token);
       return {
         token: _payload.token,
@@ -987,7 +991,7 @@ function test() {
   );
   const encodedMsg = new Uint8Array(typedArray);
   // console.log('message', encodedMsg);
-  XR(encodedMsg);
+  BINARY_TO_JSON(encodedMsg);
 }
 
 // test()
@@ -1072,7 +1076,10 @@ function getAllExpiry() {
 module.exports = {
   decodeData: function (data) {
     // whatever
-    message = XR(data);
+    message = BINARY_TO_JSON(data);
+
+    if (message.payload.insrumentToken === 260105) console.log(message);
+
     return message;
   },
 
